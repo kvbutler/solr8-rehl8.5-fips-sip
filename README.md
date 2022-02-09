@@ -347,7 +347,7 @@ SOLR_SSL_TRUST_STORE_TYPE=PKCS11
 4. Copy the password-less keystore with 0 entries [NONE](files/NONE) to `/solr/server`
 5. Import certificate to NSS database
 `pk12util -d /etc/pki/nssdb -i STAR.MILITARYCHILDCARE.COM.p12` 
-6. Copy the following into `/etc/systemd/system/solrd.service`
+6. Copy the following into `/etc/systemd/system/solrd.service`. [Credit](https://gist.github.com/hammady/3d7b5964c7b0f90997865ebef40bf5e1)
 ```
 # put this file in /etc/systemd/system/ as root
 # below paths assume solr installed in /opt/solr, SOLR_PID_DIR is /data
