@@ -380,11 +380,12 @@ WantedBy=multi-user.target graphical.target
 1. After attempting to run the systemd service, read denied processes
 `grep -i denied /var/log/audit/audit.log`
 2. Write the custom SEL module
-`grep -i denied /var/log/audit/audit.log | audit2allow solrd`
+`grep -i denied /var/log/audit/audit.log | audit2allow -m solrd`
 3. Verify SEL module
 `cat solrd.te`
 4. Apply SEL module
-`semodule -i modulename`
+`semodule -i solrd.pp`
 
 ## FAPolicy Config
-1. TODO
+1. Use the fapolicyd-cli to add correct permissions, must re-run when upgrading or modifying file contents
+`fapolicyd-cli --file add /app/solr-8.11.1/`
