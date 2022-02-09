@@ -381,9 +381,9 @@ WantedBy=multi-user.target graphical.target
 `grep -i denied /var/log/audit/audit.log`
 2. Write the custom SEL module
 `grep -i denied /var/log/audit/audit.log | audit2allow solrd`
-- Verify SEL module
+3. Verify SEL module
 `cat solrd.te`
-- Apply SEL module
+4. Apply SEL module
 `semodule -i modulename`
 
 ## FAPolicy Config
