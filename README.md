@@ -346,7 +346,7 @@ SOLR_SSL_TRUST_STORE_TYPE=PKCS11
 ```
 4. Copy the password-less keystore with 0 entries [NONE](files/NONE) to `/solr/server`
 5. Import certificate to NSS database
-`pk12util -d /etc/pki/nssdb -i STAR.MILITARYCHILDCARE.COM.p12` 
+`pk12util -d /etc/pki/nssdb -i ${PKCS12_KEYSTORE_NAME}.p12` 
 6. Copy the following into `/etc/systemd/system/solrd.service`. [Credit](https://gist.github.com/hammady/3d7b5964c7b0f90997865ebef40bf5e1)
 ```
 # put this file in /etc/systemd/system/ as root
@@ -389,3 +389,16 @@ WantedBy=multi-user.target graphical.target
 ## FAPolicy Config
 1. Use the fapolicyd-cli to add correct permissions, must re-run when upgrading or modifying file contents
 `fapolicyd-cli --file add /app/solr-8.11.1/`
+
+## Apache config (optional)
+
+1. Install httpd
+`dnf install httpd`
+2. Update firewall
+```bash
+firewall-cmd --permanent --add-port=443/tcp
+firewall-cmd --reload
+```
+3. Enable service
+`systemctl enable --now httpd`
+4. Install Apache modules
