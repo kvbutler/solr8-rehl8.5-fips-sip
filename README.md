@@ -391,7 +391,6 @@ WantedBy=multi-user.target graphical.target
 `fapolicyd-cli --file add /app/solr-8.11.1/`
 
 ## Apache config (optional)
-
 1. Install httpd
 `dnf install httpd`
 2. Update firewall
@@ -402,3 +401,41 @@ firewall-cmd --reload
 3. Enable service
 `systemctl enable --now httpd`
 4. Install Apache modules
+```bash
+dnf install mod_ssl
+```
+5. Install certificate
+```bash
+mv ${PRIVATE_KEY_NAME}.key /etc/pki/tls/private/
+mv ${CERTIFICATE_NAME}.crt /etc/pki/tls/certs/
+chown -R root:root /etc/pki/tls/private/
+chown -R root:root /etc/pki/tls/certs/
+chmod 600 /etc/pki/tls/private/${PRIVATE_KEY_NAME}.key
+chmod 600 /etc/pki/tls/certs/${CERTIFICATE_NAME}.crt
+```
+6. Update ssl config
+`vi /etc/httpd/conf.d/ssl.conf`
+- Update `SSLCertificateKeyFile` `SSLCertificateFile` properties with the paths from step 5
+7. Add file `/etc/httpd/conf.d/solr.conf`
+```
+<VirtualHost *:443>
+  ServerName ${SERVER_NAME}
+  ServerAlias ${SERVER_ALIAS}
+  SSLProxyEngine on
+  SSLCertificateFile /etc/pki/tls/certs/${CERTIFICATE_NAME}.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/${PRIVATE_KEY_NAME}.key
+  # Following settings are needed because certificate does not apply to localhost
+  SSLProxyVerify none
+  SSLProxyCheckPeerCN off
+  SSLProxyCheckPeerName off
+  SSLProxyCheckPeerExpire off
+  ProxyPass / https://localhost:8983/
+  ProxyPassReverse / https://localhost:8983/
+</VirtualHost>
+```
+8. Check config (optional)
+`apachectl configtest`
+9. Enable Apache outbound connections
+`/usr/sbin/setsebool -P httpd_can_network_connect 1`
+10. Restart Apache
+`systemctl restart httpd`
